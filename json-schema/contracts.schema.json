@@ -1,0 +1,1812 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "uiPatch": {
+      "$ref": "#/$defs/UiPatch"
+    },
+    "queryDiff": {
+      "$ref": "#/$defs/QueryDiff"
+    },
+    "queryState": {
+      "$ref": "#/$defs/QueryState"
+    },
+    "productDetail": {
+      "$ref": "#/$defs/ProductDetail"
+    },
+    "cartView": {
+      "$ref": "#/$defs/CartView"
+    },
+    "orderView": {
+      "$ref": "#/$defs/OrderView"
+    },
+    "clientMessage": {
+      "$ref": "#/$defs/ClientMessage"
+    },
+    "metricsSummary": {
+      "$ref": "#/$defs/MetricsSummary"
+    },
+    "rejectionReport": {
+      "$ref": "#/$defs/RejectionReport"
+    },
+    "experimentTask": {
+      "$ref": "#/$defs/ExperimentTask"
+    },
+    "startTrialRequest": {
+      "$ref": "#/$defs/StartTrialRequest"
+    },
+    "startTrialResponse": {
+      "$ref": "#/$defs/StartTrialResponse"
+    },
+    "finishTrialRequest": {
+      "$ref": "#/$defs/FinishTrialRequest"
+    },
+    "finishTrialResponse": {
+      "$ref": "#/$defs/FinishTrialResponse"
+    },
+    "experimentSummary": {
+      "$ref": "#/$defs/ExperimentSummary"
+    }
+  },
+  "required": [
+    "uiPatch",
+    "queryDiff",
+    "queryState",
+    "productDetail",
+    "cartView",
+    "orderView",
+    "clientMessage",
+    "metricsSummary",
+    "rejectionReport",
+    "experimentTask",
+    "startTrialRequest",
+    "startTrialResponse",
+    "finishTrialRequest",
+    "finishTrialResponse",
+    "experimentSummary"
+  ],
+  "additionalProperties": false,
+  "title": "VoicefitContracts",
+  "$defs": {
+    "UiPatch": {
+      "type": "object",
+      "properties": {
+        "v": {
+          "type": "number",
+          "const": 1
+        },
+        "seq": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        },
+        "event": {
+          "$ref": "#/$defs/UiEvent"
+        }
+      },
+      "required": [
+        "v",
+        "seq",
+        "event"
+      ],
+      "additionalProperties": false
+    },
+    "UiEvent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "agent_state"
+            },
+            "activity": {
+              "$ref": "#/$defs/AgentActivity"
+            }
+          },
+          "required": [
+            "type",
+            "activity"
+          ],
+          "additionalProperties": false,
+          "title": "AgentStateEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "transcript"
+            },
+            "turnId": {
+              "type": "string"
+            },
+            "role": {
+              "type": "string",
+              "enum": [
+                "user",
+                "assistant"
+              ]
+            },
+            "text": {
+              "type": "string"
+            },
+            "final": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "type",
+            "turnId",
+            "role",
+            "text",
+            "final"
+          ],
+          "additionalProperties": false,
+          "title": "TranscriptEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "show_list"
+            },
+            "turnId": {
+              "type": "string"
+            },
+            "query": {
+              "$ref": "#/$defs/QueryState"
+            },
+            "items": {
+              "maxItems": 12,
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ProductCard"
+              }
+            },
+            "totalCandidates": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "required": [
+            "type",
+            "turnId",
+            "query",
+            "items",
+            "totalCandidates"
+          ],
+          "additionalProperties": false,
+          "title": "ShowListEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "list_reasons"
+            },
+            "turnId": {
+              "type": "string"
+            },
+            "reasons": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "reason": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "productId",
+                  "reason"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "type",
+            "turnId",
+            "reasons"
+          ],
+          "additionalProperties": false,
+          "title": "ListReasonsEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "show_detail"
+            },
+            "product": {
+              "$ref": "#/$defs/ProductDetail"
+            }
+          },
+          "required": [
+            "type",
+            "product"
+          ],
+          "additionalProperties": false,
+          "title": "ShowDetailEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "size_advice"
+            },
+            "productId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "recommendedSize": {
+              "type": "string"
+            },
+            "confidence": {
+              "$ref": "#/$defs/SizeConfidence"
+            },
+            "reasons": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "type",
+            "productId",
+            "recommendedSize",
+            "confidence",
+            "reasons"
+          ],
+          "additionalProperties": false,
+          "title": "SizeAdviceEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "cart_updated"
+            },
+            "cart": {
+              "$ref": "#/$defs/CartView"
+            }
+          },
+          "required": [
+            "type",
+            "cart"
+          ],
+          "additionalProperties": false,
+          "title": "CartUpdatedEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "fallback_to_filters"
+            },
+            "query": {
+              "$ref": "#/$defs/QueryState"
+            },
+            "reason": {
+              "type": "string",
+              "const": "stalled"
+            }
+          },
+          "required": [
+            "type",
+            "query",
+            "reason"
+          ],
+          "additionalProperties": false,
+          "title": "FallbackToFiltersEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "error"
+            },
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "type",
+            "code",
+            "message"
+          ],
+          "additionalProperties": false,
+          "title": "ErrorEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "session"
+            },
+            "sessionId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "type",
+            "sessionId"
+          ],
+          "additionalProperties": false,
+          "title": "SessionEvent"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "request_body_profile"
+            },
+            "productId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "type",
+            "productId"
+          ],
+          "additionalProperties": false,
+          "title": "RequestBodyProfileEvent"
+        }
+      ]
+    },
+    "AgentActivity": {
+      "type": "string",
+      "enum": [
+        "idle",
+        "listening",
+        "thinking",
+        "speaking"
+      ]
+    },
+    "QueryState": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ProductCategory"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "priceMinMinor": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "priceMaxMinor": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "colorFamilies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ColorFamily"
+          }
+        },
+        "lightness": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "warmth": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "minimum": 1,
+          "maximum": 5
+        },
+        "fit": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/FitType"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "occasion": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/Occasion"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "excludeProductIds": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "pairWithProductId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        }
+      },
+      "required": [
+        "category",
+        "priceMinMinor",
+        "priceMaxMinor",
+        "colorFamilies",
+        "lightness",
+        "warmth",
+        "fit",
+        "occasion",
+        "excludeProductIds",
+        "pairWithProductId"
+      ],
+      "additionalProperties": false
+    },
+    "ProductCategory": {
+      "type": "string",
+      "enum": [
+        "outer_jacket",
+        "outer_coat",
+        "outer_blouson",
+        "setup",
+        "shirt",
+        "knit",
+        "pants"
+      ]
+    },
+    "ColorFamily": {
+      "type": "string",
+      "enum": [
+        "black",
+        "white",
+        "gray",
+        "navy",
+        "beige",
+        "brown",
+        "khaki",
+        "blue",
+        "green",
+        "etc"
+      ]
+    },
+    "FitType": {
+      "type": "string",
+      "enum": [
+        "slim",
+        "regular",
+        "relaxed",
+        "oversized"
+      ]
+    },
+    "Occasion": {
+      "type": "string",
+      "enum": [
+        "commute",
+        "casual",
+        "date",
+        "formal",
+        "outdoor"
+      ]
+    },
+    "ProductCard": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "brandName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/ProductCategory"
+        },
+        "priceMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "imageUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "colorFamily": {
+          "$ref": "#/$defs/ColorFamily"
+        }
+      },
+      "required": [
+        "productId",
+        "brandName",
+        "name",
+        "category",
+        "priceMinor",
+        "imageUrl",
+        "colorFamily"
+      ],
+      "additionalProperties": false
+    },
+    "ProductDetail": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "brandName": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "category": {
+          "$ref": "#/$defs/ProductCategory"
+        },
+        "priceMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "imageUrl": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "colorFamily": {
+          "$ref": "#/$defs/ColorFamily"
+        },
+        "attributes": {
+          "$ref": "#/$defs/ProductAttributes"
+        },
+        "measurements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SizeMeasurement"
+          }
+        },
+        "variants": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/VariantView"
+          }
+        }
+      },
+      "required": [
+        "productId",
+        "brandName",
+        "name",
+        "category",
+        "priceMinor",
+        "imageUrl",
+        "colorFamily",
+        "attributes",
+        "measurements",
+        "variants"
+      ],
+      "additionalProperties": false
+    },
+    "ProductAttributes": {
+      "type": "object",
+      "properties": {
+        "colorFamily": {
+          "$ref": "#/$defs/ColorFamily"
+        },
+        "lightness": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "warmth": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        },
+        "fit": {
+          "$ref": "#/$defs/FitType"
+        },
+        "occasions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/Occasion"
+          }
+        },
+        "material": {
+          "type": "string",
+          "maxLength": 60
+        }
+      },
+      "required": [
+        "colorFamily",
+        "lightness",
+        "warmth",
+        "fit",
+        "occasions",
+        "material"
+      ],
+      "additionalProperties": false
+    },
+    "SizeMeasurement": {
+      "type": "object",
+      "properties": {
+        "sizeLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 16
+        },
+        "shoulderMm": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "chestMm": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "lengthMm": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "sleeveMm": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "sizeLabel",
+        "shoulderMm",
+        "chestMm",
+        "lengthMm",
+        "sleeveMm"
+      ],
+      "additionalProperties": false
+    },
+    "VariantView": {
+      "type": "object",
+      "properties": {
+        "variantId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "sizeLabel": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string"
+        },
+        "available": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "variantId",
+        "sizeLabel",
+        "color",
+        "available"
+      ],
+      "additionalProperties": false
+    },
+    "SizeConfidence": {
+      "type": "string",
+      "enum": [
+        "high",
+        "medium",
+        "low"
+      ]
+    },
+    "CartView": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/CartLineView"
+          }
+        },
+        "subtotalMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        }
+      },
+      "required": [
+        "items",
+        "subtotalMinor"
+      ],
+      "additionalProperties": false
+    },
+    "CartLineView": {
+      "type": "object",
+      "properties": {
+        "variantId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "name": {
+          "type": "string"
+        },
+        "brandName": {
+          "type": "string"
+        },
+        "sizeLabel": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unitPriceMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "lineTotalMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        }
+      },
+      "required": [
+        "variantId",
+        "productId",
+        "name",
+        "brandName",
+        "sizeLabel",
+        "qty",
+        "unitPriceMinor",
+        "lineTotalMinor"
+      ],
+      "additionalProperties": false
+    },
+    "QueryDiff": {
+      "type": "object",
+      "properties": {
+        "ops": {
+          "maxItems": 8,
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/QueryOp"
+          }
+        }
+      },
+      "required": [
+        "ops"
+      ],
+      "additionalProperties": false
+    },
+    "QueryOp": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_category"
+            },
+            "value": {
+              "$ref": "#/$defs/ProductCategory"
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false,
+          "title": "SetCategoryOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_price_max"
+            },
+            "valueMinor": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "description": "원 단위 정수 금액"
+            }
+          },
+          "required": [
+            "op",
+            "valueMinor"
+          ],
+          "additionalProperties": false,
+          "title": "SetPriceMaxOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_price_min"
+            },
+            "valueMinor": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991,
+              "description": "원 단위 정수 금액"
+            }
+          },
+          "required": [
+            "op",
+            "valueMinor"
+          ],
+          "additionalProperties": false,
+          "title": "SetPriceMinOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "cheaper_than_focused"
+            }
+          },
+          "required": [
+            "op"
+          ],
+          "additionalProperties": false,
+          "title": "CheaperThanFocusedOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_colors"
+            },
+            "values": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/ColorFamily"
+              }
+            }
+          },
+          "required": [
+            "op",
+            "values"
+          ],
+          "additionalProperties": false,
+          "title": "SetColorsOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "adjust_lightness"
+            },
+            "delta": {
+              "type": "integer",
+              "minimum": -2,
+              "maximum": 2
+            }
+          },
+          "required": [
+            "op",
+            "delta"
+          ],
+          "additionalProperties": false,
+          "title": "AdjustLightnessOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "adjust_warmth"
+            },
+            "delta": {
+              "type": "integer",
+              "minimum": -2,
+              "maximum": 2
+            }
+          },
+          "required": [
+            "op",
+            "delta"
+          ],
+          "additionalProperties": false,
+          "title": "AdjustWarmthOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_warmth"
+            },
+            "value": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false,
+          "title": "SetWarmthOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_fit"
+            },
+            "value": {
+              "$ref": "#/$defs/FitType"
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false,
+          "title": "SetFitOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "set_occasion"
+            },
+            "value": {
+              "$ref": "#/$defs/Occasion"
+            }
+          },
+          "required": [
+            "op",
+            "value"
+          ],
+          "additionalProperties": false,
+          "title": "SetOccasionOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "exclude"
+            },
+            "productIds": {
+              "minItems": 1,
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          },
+          "required": [
+            "op",
+            "productIds"
+          ],
+          "additionalProperties": false,
+          "title": "ExcludeOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "pair_with"
+            },
+            "productId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "category": {
+              "$ref": "#/$defs/ProductCategory"
+            }
+          },
+          "required": [
+            "op",
+            "productId",
+            "category"
+          ],
+          "additionalProperties": false,
+          "title": "PairWithOp"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "op": {
+              "type": "string",
+              "const": "clear"
+            },
+            "field": {
+              "$ref": "#/$defs/ClearableField"
+            }
+          },
+          "required": [
+            "op",
+            "field"
+          ],
+          "additionalProperties": false,
+          "title": "ClearOp"
+        }
+      ]
+    },
+    "ClearableField": {
+      "type": "string",
+      "enum": [
+        "category",
+        "price",
+        "colorFamilies",
+        "lightness",
+        "warmth",
+        "fit",
+        "occasion",
+        "pairWith"
+      ]
+    },
+    "OrderView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "status": {
+          "$ref": "#/$defs/OrderStatus"
+        },
+        "subtotalMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "couponMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "totalMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "items": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/OrderItemView"
+          }
+        },
+        "reservationExpiresAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "paidAt": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "status",
+        "subtotalMinor",
+        "couponMinor",
+        "totalMinor",
+        "items",
+        "reservationExpiresAt",
+        "createdAt",
+        "paidAt"
+      ],
+      "additionalProperties": false
+    },
+    "OrderStatus": {
+      "type": "string",
+      "enum": [
+        "pending_payment",
+        "paying",
+        "paid",
+        "cancelled",
+        "expired"
+      ]
+    },
+    "OrderItemView": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "variantId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "brandId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "productName": {
+          "type": "string"
+        },
+        "brandName": {
+          "type": "string"
+        },
+        "sizeLabel": {
+          "type": "string"
+        },
+        "qty": {
+          "type": "integer",
+          "exclusiveMinimum": 0,
+          "maximum": 9007199254740991
+        },
+        "unitPriceMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "lineTotalMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "couponShareMinor": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 9007199254740991,
+          "description": "원 단위 정수 금액"
+        },
+        "shipment": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "carrier": {
+                  "type": "string"
+                },
+                "trackingNo": {
+                  "type": "string"
+                },
+                "shippedAt": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              },
+              "required": [
+                "carrier",
+                "trackingNo",
+                "shippedAt"
+              ],
+              "additionalProperties": false
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "returnStatus": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "enum": [
+            "requested",
+            "approved",
+            "rejected",
+            "refunded"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "variantId",
+        "brandId",
+        "productName",
+        "brandName",
+        "sizeLabel",
+        "qty",
+        "unitPriceMinor",
+        "lineTotalMinor",
+        "couponShareMinor",
+        "shipment",
+        "returnStatus"
+      ],
+      "additionalProperties": false
+    },
+    "ClientMessage": {
+      "oneOf": [
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "user_text"
+            },
+            "text": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 300
+            }
+          },
+          "required": [
+            "type",
+            "text"
+          ],
+          "additionalProperties": false,
+          "title": "UserTextMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "apply_filters"
+            },
+            "query": {
+              "$ref": "#/$defs/QueryState"
+            }
+          },
+          "required": [
+            "type",
+            "query"
+          ],
+          "additionalProperties": false,
+          "title": "ApplyFiltersMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "select_product"
+            },
+            "productId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "type",
+            "productId"
+          ],
+          "additionalProperties": false,
+          "title": "SelectProductMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "ask_size"
+            },
+            "productId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "type",
+            "productId"
+          ],
+          "additionalProperties": false,
+          "title": "AskSizeMessage"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string",
+              "const": "add_to_cart"
+            },
+            "variantId": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "type",
+            "variantId"
+          ],
+          "additionalProperties": false,
+          "title": "AddToCartMessage"
+        }
+      ]
+    },
+    "MetricsSummary": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "to": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "sessions": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "turns": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "avgSessionCostWon": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "sessionConversion": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "recommendationAddRate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "itemsPerSession": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "reachWithin3Turns": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "fallbackRate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "topRejections": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "count": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "code",
+              "count"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "daily": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "day": {
+                "type": "string"
+              },
+              "sessions": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "adds": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "day",
+              "sessions",
+              "adds"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "sessions",
+        "turns",
+        "avgSessionCostWon",
+        "sessionConversion",
+        "recommendationAddRate",
+        "itemsPerSession",
+        "reachWithin3Turns",
+        "fallbackRate",
+        "topRejections",
+        "daily"
+      ],
+      "additionalProperties": false
+    },
+    "RejectionReport": {
+      "type": "object",
+      "properties": {
+        "brandId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "totalSignals": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "products": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "productId": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "signals": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "reasons": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "$ref": "#/$defs/RejectionReason"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "samples": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "productId",
+              "name",
+              "signals",
+              "reasons",
+              "samples"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "brandId",
+        "totalSignals",
+        "products"
+      ],
+      "additionalProperties": false
+    },
+    "RejectionReason": {
+      "type": "string",
+      "enum": [
+        "price",
+        "color",
+        "fit_worry",
+        "material",
+        "style",
+        "other"
+      ]
+    },
+    "ExperimentTask": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": [
+                "string",
+                "null"
+              ]
+            },
+            "priceMaxMinor": {
+              "type": [
+                "integer",
+                "null"
+              ],
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            },
+            "colorFamilies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "category",
+            "priceMaxMinor",
+            "colorFamilies"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "prompt",
+        "criteria"
+      ],
+      "additionalProperties": false
+    },
+    "StartTrialRequest": {
+      "type": "object",
+      "properties": {
+        "participantCode": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "taskId": {
+          "type": "string"
+        },
+        "condition": {
+          "$ref": "#/$defs/ExperimentCondition"
+        }
+      },
+      "required": [
+        "participantCode",
+        "taskId",
+        "condition"
+      ],
+      "additionalProperties": false
+    },
+    "ExperimentCondition": {
+      "type": "string",
+      "enum": [
+        "search",
+        "conversation"
+      ]
+    },
+    "StartTrialResponse": {
+      "type": "object",
+      "properties": {
+        "trialId": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "task": {
+          "$ref": "#/$defs/ExperimentTask"
+        },
+        "startedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "trialId",
+        "task",
+        "startedAt"
+      ],
+      "additionalProperties": false
+    },
+    "FinishTrialRequest": {
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "format": "uuid"
+        },
+        "intentScore": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 5
+        }
+      },
+      "required": [
+        "productId",
+        "intentScore"
+      ],
+      "additionalProperties": false
+    },
+    "FinishTrialResponse": {
+      "type": "object",
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "elapsedMs": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        }
+      },
+      "required": [
+        "success",
+        "elapsedMs"
+      ],
+      "additionalProperties": false
+    },
+    "ExperimentSummary": {
+      "type": "object",
+      "properties": {
+        "trials": {
+          "type": "integer",
+          "minimum": -9007199254740991,
+          "maximum": 9007199254740991
+        },
+        "byCondition": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "condition": {
+                "$ref": "#/$defs/ExperimentCondition"
+              },
+              "trials": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "successRate": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              },
+              "medianMs": {
+                "type": [
+                  "number",
+                  "null"
+                ]
+              }
+            },
+            "required": [
+              "condition",
+              "trials",
+              "successRate",
+              "medianMs"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "timeReduction": {
+          "type": [
+            "number",
+            "null"
+          ]
+        },
+        "intentRate": {
+          "type": [
+            "number",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "trials",
+        "byCondition",
+        "timeReduction",
+        "intentRate"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
