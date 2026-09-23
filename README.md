@@ -12,12 +12,19 @@ src/*.ts (Zod)  ──build──▶  dist/ (TypeScript 타입 + 런타임 검�
 
 ## 쓰는 쪽 설정
 
+이 저장소는 **공개**입니다. 계약(스키마)은 공개해도 되는 정보이고, 이걸 쓰는 서비스 저장소는 비공개입니다.
+
 ```bash
-export NODE_AUTH_TOKEN=$(gh auth token)   # read:packages 권한 필요
-pnpm add @voicefit/contracts
+pnpm add @voicefit/contracts            # GitHub Packages (레지스트리). 토큰이 필요하다
+pnpm add github:VoiceFit/contracts#v0.1.1   # 레지스트리 없이 태그에서 바로 (인증 불필요)
 ```
 
-저장소 루트의 `.npmrc`가 `@voicefit` 스코프를 GitHub Packages로 보냅니다. 토큰은 파일에 적지 않고 환경 변수로만 넣습니다.
+레지스트리로 받을 때는 저장소 루트의 `.npmrc`가 `@voicefit` 스코프를 GitHub Packages로 보냅니다.
+pnpm 12는 `.npmrc`의 `${환경변수}`를 풀어 주지 않으므로 토큰은 사용자 설정에 넣습니다.
+
+```bash
+pnpm config set -g "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
+```
 
 ## 바꾸고 배포하기
 
