@@ -4,6 +4,8 @@ on:
   pull_request:
   push:
     branches: [main]
+  # 권한·시크릿을 고친 뒤 손으로 다시 돌릴 수 있게 열어 둔다
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
