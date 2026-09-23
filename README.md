@@ -16,7 +16,7 @@ src/*.ts (Zod)  ──build──▶  dist/ (TypeScript 타입 + 런타임 검�
 
 ```bash
 pnpm add @voicefit/contracts            # GitHub Packages (레지스트리). 토큰이 필요하다
-pnpm add github:VoiceFit/contracts#v0.1.1   # 레지스트리 없이 태그에서 바로 (인증 불필요)
+pnpm add github:VoiceFit/contracts#v0.1.2   # 레지스트리 없이 태그에서 바로 (인증 불필요)
 ```
 
 레지스트리로 받을 때는 저장소 루트의 `.npmrc`가 `@voicefit` 스코프를 GitHub Packages로 보냅니다.
@@ -25,6 +25,9 @@ pnpm 12는 `.npmrc`의 `${환경변수}`를 풀어 주지 않으므로 토큰은
 ```bash
 pnpm config set -g "//npm.pkg.github.com/:_authToken" "$(gh auth token)"
 ```
+
+빌드 결과(`dist`)도 커밋합니다 — 태그에서 바로 설치할 때 설치 측에서 빌드하지 않게 하기 위해서입니다.
+CI 가 다시 만들어 diff 로 어긋남을 잡습니다.
 
 ## 바꾸고 배포하기
 

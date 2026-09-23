@@ -28,6 +28,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm typecheck
       - run: pnpm test
-      # 생성물(dist·json-schema)이 Zod 원본과 어긋나면 소비자가 다른 계약을 믿게 된다
+      # 생성물(dist·json-schema)이 Zod 원본과 어긋나면 소비자가 다른 계약을 믿게 된다.
+      # dist 를 커밋해 두는 이유: 소비자가 공개 태그에서 인증 없이 바로 설치할 수 있게 하려고.
       - run: pnpm export:json-schema
-      - run: git diff --exit-code -- json-schema
+      - run: git diff --exit-code -- json-schema dist

@@ -1,6 +1,6 @@
 {
   "name": "@voicefit/contracts",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "보이스핏 스키마 계약 — web·api·agent가 같은 원본을 쓴다",
   "repository": {
     "type": "git",
@@ -30,8 +30,7 @@
     "test": "vitest run",
     "export:json-schema": "pnpm build && node scripts/export-json-schema.mjs",
     "dev": "tsc -p tsconfig.build.json --watch --preserveWatchOutput",
-    "prepack": "pnpm build",
-    "prepare": "pnpm build"
+    "prepack": "pnpm build"
   },
   "dependencies": {
     "zod": "^4.6.5"
