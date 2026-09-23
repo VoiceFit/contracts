@@ -16,7 +16,7 @@ src/*.ts (Zod)  ──build──▶  dist/ (TypeScript 타입 + 런타임 검�
 
 ```bash
 pnpm add @voicefit/contracts            # GitHub Packages (레지스트리). 토큰이 필요하다
-pnpm add github:VoiceFit/contracts#v0.1.2   # 레지스트리 없이 태그에서 바로 (인증 불필요)
+pnpm add github:VoiceFit/contracts#v0.1.3   # 레지스트리 없이 태그에서 바로 (인증 불필요)
 ```
 
 레지스트리로 받을 때는 저장소 루트의 `.npmrc`가 `@voicefit` 스코프를 GitHub Packages로 보냅니다.

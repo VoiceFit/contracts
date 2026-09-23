@@ -28,6 +28,8 @@ jobs:
           pkg="$(node -p "require('./package.json').version")"
           [ "$tag" = "$pkg" ] || { echo "태그 $tag 와 package.json $pkg 가 다릅니다"; exit 1; }
       - run: pnpm test
+      # 설치 시 빌드 스크립트를 두지 않으므로(태그 설치용) 배포 전에 여기서 빌드한다
+      - run: pnpm build
       - run: pnpm publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
