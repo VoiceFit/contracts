@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { EMPTY_QUERY_STATE, UiPatch } from '../src/index.js';
+import { EMPTY_QUERY_STATE, NativeSessionView, UiPatch } from '../src/index.js';
 
 const PRODUCT_ID = '6f1c2a3e-4b5d-4e6f-8a9b-0c1d2e3f4a5b';
 
@@ -38,5 +38,20 @@ describe('UiPatch', () => {
     const base = { type: 'size_advice', productId: PRODUCT_ID, recommendedSize: 'M', confidence: 'high' };
     expect(() => UiPatch.parse({ v: 1, seq: 1, event: { ...base, reasons: [] } })).toThrow();
     expect(UiPatch.parse({ v: 1, seq: 1, event: { ...base, reasons: ['평소 L, 이 브랜드는 크게 나옴'] } }).seq).toBe(1);
+  });
+});
+
+describe('NativeSessionView', () => {
+  it('앱 세션은 토큰·만료·내 정보를 함께 준다', () => {
+    const parsed = NativeSessionView.parse({
+      token: 'eyJhbGciOiJIUzI1NiJ9.e30.sig',
+      expiresAt: '2026-10-07T00:00:00.000Z',
+      me: { customerId: '00000000-0000-4000-8000-000000000001', email: 'a@b.c', isAdmin: false, brands: [], hasBodyProfile: false },
+    });
+    expect(parsed.token).toContain('eyJ');
+  });
+
+  it('토큰이 없으면 거절한다 — 앱이 로그인됐다고 착각하면 안 된다', () => {
+    expect(NativeSessionView.safeParse({ expiresAt: '2026-10-07T00:00:00.000Z', me: null }).success).toBe(false);
   });
 });
